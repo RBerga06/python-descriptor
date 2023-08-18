@@ -32,7 +32,8 @@ class WithSetName[X, N: str = str](Protocol):
 
 
 class WithGetAndSet[X, Tget, Uget, Tset](WithGet[X, Tget, Uget], WithSet[X, Tset], Protocol):
-    ...
+    """Equivalent to `WithGet[X, Tget, Uget] & WithSet[X, Tset]`."""
+    # '&' here denotes an intersection. Not yet introduced in the Python typing system (but soon might be).
 
 
 type AttrGet[T] = T | WithGet[Any, T, Any]
