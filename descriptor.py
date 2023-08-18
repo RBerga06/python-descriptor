@@ -1,5 +1,5 @@
 """Descriptor protocol[s] definitions."""
-from typing import Any, Never, Protocol, overload
+from typing import Any, Protocol, overload
 
 
 class WithGet[X, T, U](Protocol):
@@ -38,4 +38,5 @@ class WithGetAndSet[X, Tget, Uget, Tset](WithGet[X, Tget, Uget], WithSet[X, Tset
 type AttrGet[T] = T | WithGet[Any, T, Any]
 type AttrSet[T] = T | WithSet[Any, T]
 type Attr[T]    = T | WithGetAndSet[Any, T, Any, T]
-type AttrGetOnly[T] = WithGetAndSet[Any, T, Any, Never]
+# type AttrGetOnly[T] = AttrGet[T] & (AttrSet[Never] | ~AttrSet[Any])
+#   (requires Intersection and Not, that might be introduced in future Python versions)

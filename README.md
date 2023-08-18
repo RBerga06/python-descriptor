@@ -4,7 +4,7 @@ This approach is 100% supported by the pyright type checker.
 
 Have a look at the Python files in this repo:
 
-- `descriptor.pyi` contains the definition of all descriptor protocols
+- `descriptor.py` contains the definition of all descriptor protocols
 - `property.py` contains a redefinition of Python's builtin `property` type, *but* it's correctly typed.
 - `usage.py` contains some examples
 

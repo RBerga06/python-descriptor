@@ -4,7 +4,7 @@
 from dataclasses import InitVar, dataclass, field
 from typing import Any, Callable, Never, Self, overload, reveal_type
 from typing_extensions import override
-from descriptor import *  # type: ignore
+from descriptor import *
 
 
 @dataclass(slots=True)
@@ -77,35 +77,42 @@ class property[
         return prop
 
 
-class Foo:
-    @property
-    def foo(self, /) -> int:     # type: ignore[reportGeneralTypeIssues]
-        return 42
-
-    reveal_type(foo)             # property[Self@Foo, int, Never, Never]
-
-    @foo.setter
-    def foo(self, x: int) -> None:
-        return
-
-    reveal_type(foo)             # property[Self@Foo, int, int, Never]
-    reveal_type(foo.__set__)     # (Self@Foo, int) -> None
-    reveal_type(foo.__get__)     # Overload[
-                                 #   (Self@Foo, type[Self@Foo]) -> int,
-                                 #   (None, type[Self@Foo]) -> property[Foo, int, int, Never])
-                                 # ]
-    reveal_type(foo.__delete__)  # (Never) -> None
-
-    # Qt-like Python property
-    def getBar(self) -> int: ...
-    def setBar(self, bar: int | str) -> None: ...
-    def delBar(self) -> None: ...
-    bar = property(getBar, setBar, delBar, "The 'bar' property.")
+__all__ = ["property"]
 
 
+if __name__ == "__main__":
+    # --- Usage and Behaviour ---
 
-reveal_type(Foo().foo)  # int
-reveal_type(Foo.foo)    # property[Foo, int, int, Never]
-Foo().foo = 42          # ok
-del Foo().foo           # error: cannot delete
-del Foo().bar           # ok
+    class Foo:
+        @property
+        def foo(self, /) -> int:     # type: ignore[reportGeneralTypeIssues]
+            return 42
+
+        reveal_type(foo)             # property[Self@Foo, int, Never, Never]
+
+        @foo.setter
+        def foo(self, x: int) -> None:
+            return
+
+        reveal_type(foo)             # property[Self@Foo, int, int, Never]
+        reveal_type(foo.__set__)     # (Self@Foo, int) -> None
+        reveal_type(foo.__get__)     # Overload[
+                                    #   (Self@Foo, type[Self@Foo]) -> int,
+                                    #   (None, type[Self@Foo]) -> property[Foo, int, int, Never])
+                                    # ]
+        reveal_type(foo.__delete__)  # (Never) -> None
+
+        # Qt-like Python property
+        def getBar(self) -> int: ...
+        def setBar(self, bar: int | str) -> None: ...
+        def delBar(self) -> None: ...
+        bar = property(getBar, setBar, delBar, "The 'bar' property.")
+        reveal_type(bar)   # property[Self@Foo, int, int | str, Self@Foo]
+
+
+
+    reveal_type(Foo().foo)  # int
+    reveal_type(Foo.foo)    # property[Foo, int, int, Never]
+    Foo().foo = 42          # ok
+    del Foo().foo           # error: cannot delete
+    del Foo().bar           # ok
