@@ -9,10 +9,11 @@ from descriptor import *
 
 @dataclass(slots=True)
 class property[
-    X,
-    Tget = Never,
-    Tset = Never,
-    Xdel = Never,  # in a perfect, world, `Xdel: X = Never`
+    X,             # the target type (subclasses can constrain thiss)
+    Tget = Never,  # the type returned by the getter
+    Tset = Never,  # the type assignable via the setter
+    Xdel = Never,  # either 'X' (if it is deletable) or 'Never' (if it isn't)
+                   #    (if it was supported, `Xdel: (X, Never) = Never`)
 ](
     WithGet[X, Tget, Any],
     WithSet[X, Tset],
