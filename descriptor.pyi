@@ -1,5 +1,5 @@
 """Descriptor protocol[s] definitions."""
-from typing import Never, Protocol, overload
+from typing import Any, Never, Protocol, overload
 
 
 class WithGet[X, T, U](Protocol):
@@ -23,13 +23,19 @@ class WithSet[X, T](Protocol):
     def __set__(self, obj: X, value: T, /) -> None: ...
 
 
-class WithDelete[X, _: (None, Never) = None](Protocol):
-    @overload
-    def __delete__(self: WithDelete[X, Never], obj: Never, /) -> None: ...
-    @overload
-    def __delete__(self: WithDelete[X, None], obj: X, /) -> None: ...
+class WithDelete[X](Protocol):
     def __delete__(self, obj: X, /) -> None: ...
 
 
 class WithSetName[X, N: str = str](Protocol):
     def __set_name__(self, obj: X, name: N, /) -> None: ...
+
+
+class WithGetAndSet[X, Tget, Uget, Tset](WithGet[X, Tget, Uget], WithSet[X, Tset], Protocol):
+    ...
+
+
+type AttrGet[T] = T | WithGet[Any, T, Any]
+type AttrSet[T] = T | WithSet[Any, T]
+type Attr[T]    = T | WithGetAndSet[Any, T, Any, T]
+type AttrGetOnly[T] = WithGetAndSet[Any, T, Any, Never]
